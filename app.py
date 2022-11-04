@@ -1,21 +1,32 @@
 import sqlite3
 from flask import Flask, request
 
+from db import DB
+
 app = Flask(__name__)
+
+
+def _init():
+    db = DB()
+
+    db.execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='grid'")
+
+    # db.close_connection()
+
+    print("_init executed")
 
 
 @app.route("/test/", methods=['GET'])
 def test():
-    con = sqlite3.connect("grids.db")
+    db = DB()
 
-    cursor = con.cursor()
-
-    cursor.execute("SELECT name FROM sqlite_master")
-    data = cursor.fetchone()
+    data = db.execute_query("SELECT name FROM sqlite_master")
 
     print(data)
 
-    return data if data is not None else {}
+    # db.close_connection()
+
+    return {'data': data} if data is not None else {}, 200
 
 
 @app.route("/info/", methods=['GET'])
@@ -44,4 +55,5 @@ def main():
 
 
 if __name__ == '__main__':
+    _init()
     app.run(debug=True)
