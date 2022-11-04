@@ -1,13 +1,14 @@
 import sqlite3
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from db import DB
+from grid import Grid
 
 app = Flask(__name__)
 
 
 def _init():
-    db = DB()
+    db = DB("grids.db")
 
     db.execute_query("SELECT name FROM sqlite_master WHERE type='table' AND name='grid'")
 
@@ -18,7 +19,7 @@ def _init():
 
 @app.route("/test/", methods=['GET'])
 def test():
-    db = DB()
+    db = DB("test.db")
 
     data = db.execute_query("SELECT name FROM sqlite_master")
 
@@ -38,15 +39,30 @@ def info():
 def submit_grid():
     data = request.get_json()
     size = data.get('size', 0)
-    values = data.get('values', 0)
+    values = data.get('values', '')
     print("{0}: {1}".format(size, values))
-    return {"id": 1}
+
+    db = DB("grids.db")
+
+    grid = Grid(size, values)
+
+    db_id = {'id': db.insert_grid(grid)}
+
+    return jsonify(db_id)
 
 
 @app.route("/sun-spot-analyser-api/scores", methods=['GET'])
 def get_scores_for_grid():
     id = request.args.get('id', default=0, type=int)
-    return {"scores": [{"x": 1, "y": 1, "score": 10}]}
+
+    db = DB("grids.db")
+
+    grid = db.get_grid(id)
+
+    if grid:
+        return jsonify(dict(scores=grid.scores))
+    else:
+        return jsonify(scores=None)
 
 
 @app.route("/", methods=['GET'])
@@ -55,5 +71,4 @@ def main():
 
 
 if __name__ == '__main__':
-    _init()
     app.run(debug=True)
