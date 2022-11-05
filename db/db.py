@@ -1,7 +1,6 @@
 import sqlite3
 import json
-from grid import Grid
-
+from grid.grid import Grid
 
 
 class DB:
@@ -19,7 +18,6 @@ class DB:
         try:
             data = cursor.fetchone()[0]
         except TypeError as e:
-            print("Table not found: grid")
             data = None
 
         if not data:
@@ -77,12 +75,14 @@ class DB:
     def _rollback_transaction(self):
         """
         makes a rollback of the current transaction
+
         """
         self.connection.rollback()
 
     def _commit_transaction(self):
         """
         Persist data in the database
+
         """
         self.connection.commit()
 
@@ -104,11 +104,11 @@ class DB:
 
     def _execute_insert_query(self, query: str) -> int:
         """
-                Execute a query passed as a parameter
+        Execute a query passed as a parameter
 
-                :param query: Query to be performed to the database
-                :return: All data retrived from the database
-                """
+        :param query: Query to be performed to the database
+        :return: Last id created with the insert
+        """
         with self:
             cursor = self.connection.cursor()
 
@@ -131,8 +131,6 @@ class DB:
         VALUES ({0}, '{1}', '{2}')""".format(grid.size, grid.values, scores_json)
 
         data = self._execute_insert_query(query)
-
-        print("Data returned in insert: {0}".format(data))
 
         return data
 

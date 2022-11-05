@@ -1,6 +1,12 @@
 class Grid:
 
-    def __init__(self, size: int, values: str, scores: list=None):
+    def __init__(self, size: int, values: str, scores: list = None):
+        """
+
+        :param size:
+        :param values:
+        :param scores:
+        """
 
         values_parameter = values
 
@@ -35,12 +41,23 @@ class Grid:
         return self._scores
 
     def _calculate_position(self, x: int, y: int) -> int:
+        """
+
+        :param x:
+        :param y:
+        :return:
+        """
         if (x < 0) or (y < 0) or (x >= self._size) or (y >= self._size):
             return -1
 
         return (y * self._size) + x
 
     def _calculate_scores(self, values_list: list) -> list:
+        """
+
+        :param values_list:
+        :return:
+        """
         scores = []
         for index, value in enumerate(values_list):
             x_position = index // self._size
@@ -51,7 +68,7 @@ class Grid:
             for x_index in range(x_position - 1, x_position + 2):
                 if x_index < 0 or x_index >= self._size:
                     continue
-                for y_index in range (y_position - 1, y_position + 2):
+                for y_index in range(y_position - 1, y_position + 2):
                     if y_index < 0 or y_index >= self._size:
                         continue
                     current_position = self._calculate_position(y_index, x_index)
