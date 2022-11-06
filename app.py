@@ -19,7 +19,9 @@ def test():
     db = DBPostgresql(os.getenv('DB_HOSTNAME'), os.getenv('DB_NAME'), os.getenv('DB_USERNAME'),
                       os.getenv('DB_PASSWORD'), os.getenv('DB_PORT'))
 
-    data = db.execute_query("SELECT current_date")
+    cursor = db.connection.cursor()
+
+    data = cursor.execute_query("SELECT current_date")
 
     return {'data': data} if data is not None else {}, 200
 
