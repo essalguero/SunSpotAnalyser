@@ -51,7 +51,3 @@ In this point the REST API should be available at http://localhost:5000
 "/sun-spot-analyser-api/scores", methods=['GET']
 
 "/sun-spot-analyser-api/grid", methods=['POST']
-
-"/sun-spot-analyser-api/info/", methods=['GET']
-
-"/test/", methods=['GET']

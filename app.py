@@ -3,27 +3,10 @@ from flask import Flask, request, jsonify
 
 from db.db_postgresql import DBPostgresql
 
+
 from grid.grid import Grid
 
 app = Flask(__name__)
-
-
-@app.route("/test/", methods=['GET'])
-def test():
-    """
-    Method to check that the app is running and DB is reachable
-
-    :return: current date
-    """
-
-    db = DBPostgresql(os.getenv('DB_HOSTNAME'), os.getenv('DB_NAME'), os.getenv('DB_USERNAME'),
-                      os.getenv('DB_PASSWORD'), os.getenv('DB_PORT'))
-
-    cursor = db.connection.cursor()
-
-    data = cursor.execute_query("SELECT current_date")
-
-    return {'data': data} if data is not None else {}, 200
 
 
 @app.route("/sun-spot-analyser-api/grid", methods=['POST'])
@@ -133,7 +116,6 @@ def main():
         "/sun-spot-analyser-api/scores", methods=['GET']
         "/sun-spot-analyser-api/grid", methods=['POST']
         "/sun-spot-analyser-api/info/", methods=['GET']
-        "/test/", methods=['GET']
     """
 
 
