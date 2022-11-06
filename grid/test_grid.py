@@ -43,6 +43,40 @@ class TestGrid(unittest.TestCase):
         grid_07 = Grid(3, '4, 2, 3, 2, 2, 1, 3, 2, 1')
         self.assertListEqual(grid_07.scores, self.grid_03_scores)
 
+    def test_calculate_average(self):
+        average = self.grid_01.get_average_value()
+        self.assertEqual(1.0, average)
+
+        average = self.grid_02.get_average_value()
+        self.assertEqual(10.0, average)
+
+        average = self.grid_03.get_average_value()
+        self.assertAlmostEqual(11.555555, average, 5)
+
+    def test_get_get_biggest_values(self):
+
+        self.assertRaises(ValueError, self.grid_03.get_biggest_values, -3)
+
+        self.assertRaises(ValueError, self.grid_01.get_biggest_values, 2)
+
+        values_list = self.grid_03.get_biggest_values(0)
+        self.assertListEqual(values_list, [{"score": 20, "x": 1, "y": 1}, {"score": 15, "x": 1, "y": 0},
+                                           {"score": 14, "x": 0, "y": 1}, {"score": 11, "x": 1, "y": 2},
+                                           {"score": 11, "x": 2, "y": 1}, {"score": 10, "x": 0, "y": 0},
+                                           {"score": 9, "x": 2, "y": 0}, {"score": 8, "x": 0, "y": 2},
+                                           {"score": 6, "x": 2, "y": 2}])
+
+        values_list = self.grid_03.get_biggest_values(1)
+        self.assertListEqual(values_list, [{"score": 20, "x": 1, "y": 1}])
+
+        values_list = self.grid_03.get_biggest_values(2)
+        self.assertListEqual(values_list, [{"score": 20, "x": 1, "y": 1}, {"score": 15, "x": 1, "y": 0}])
+
+        values_list = self.grid_03.get_biggest_values(3)
+        self.assertListEqual(values_list, [{"score": 20, "x": 1, "y": 1}, {"score": 15, "x": 1, "y": 0},
+                                           {"score": 14, "x": 0, "y": 1}])
+
+
 
 if __name__ == '__main__':
     unittest.main()

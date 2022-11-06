@@ -1,16 +1,17 @@
 import unittest
 import requests
 import json
+import os
+
 
 class TestApp(unittest.TestCase):
-    url = 'http://localhost:5000/sun-spot-analyser-api/'
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        os.environ['APP_PORT'] = '5001'
 
     def setUp(self):
-        pass
-
-    def test_info(self):
-        resp = requests.get(self.url + 'info')
-        self.assertEqual(resp.status_code, 200)
+        self.url = 'http://localhost:{0}/sun-spot-analyser-api/'.format(os.getenv('APP_PORT'))
 
     def test_scores(self):
         resp = requests.get(self.url + 'scores?id=1')
@@ -50,6 +51,25 @@ class TestApp(unittest.TestCase):
 
         self.assertDictEqual(eval(resp.text), dict_to_check)
 
+    def test_get_top_scores_for_grid(self):
+        new_grid = dict(size=1, values='1')
+        resp = requests.post(self.url + 'grid', json=new_grid)
+        resp_dict = json.loads(resp.text)
+
+        resp = requests.get(self.url + 'scores_sorted', params={'id': int(resp_dict['id']), 'number_items': 0})
+        self.assertEqual(resp.status_code, 200)
+        resp_dict_2 = json.loads(resp.text)
+
+        resp = requests.get(self.url + 'scores_sorted', params={'id': resp_dict['id'], 'number_items': -1})
+        self.assertEqual(resp.status_code, 500)
+
+        resp = requests.get(self.url + 'scores_sorted', params={'id': resp_dict['id'], 'number_items': 2})
+        self.assertEqual(resp.status_code, 500)
+
+        resp = requests.get(self.url + 'scores_sorted', params={'id': resp_dict['id'], 'number_items': 1})
+        self.assertEqual(resp.status_code, 200)
+        resp_dict_2 = json.loads(resp.text)
+        self.assertListEqual([{'score': 1, 'x': 0, 'y': 0}], resp_dict_2)
 
 if __name__ == '__main__':
     unittest.main()

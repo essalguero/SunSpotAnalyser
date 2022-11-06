@@ -1,0 +1,13 @@
+FROM python:latest
+ENV DB_NAME database
+ENV DB_HOSTNAME database
+ENV DB_USERNAME username
+ENV DB_PASSWORD secret
+ENV DB_PORT 5432
+WORKDIR /code
+ADD requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY app.py app.py
+COPY db/ db/
+COPY grid/ grid/
+CMD ["python", "-u", "app.py"]
